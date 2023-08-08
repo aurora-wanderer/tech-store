@@ -1,0 +1,52 @@
+version: '3.8'
+services:
+  tech-store:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: tech-store
+    container_name: tech-store
+    depends_on:
+      - mail-dev
+      - mssql
+    hostname: tech-store
+    ports:
+      - "4001:4001"
+    volumes:
+      - app-volume:/usr/app/tech-store
+    networks:
+      - app-network
+    environment:
+      - MAIL_HOST=mail-dev
+      - SERVER_PORT=4001
+      - SPRING_PROFILES_ACTIVE=docker
+
+  mail-dev:
+    image: maildev/maildev
+    hostname: mail-dev
+    container_name: mail-dev
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+    networks:
+      - app-network
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: tech_store_db
+    environment:
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD: PaSsWoRd123
+      MSSQL_PID: web
+    ports:
+      - "1433:1433"
+    volumes:
+      - tech_store_db_volume:/var/opt/tech_store_db
+    networks:
+      - app-network
+volumes:
+  app-volume:
+  tech_store_db_volume:
+networks:
+  app-network:
+    driver: bridge

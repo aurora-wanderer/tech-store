@@ -1,0 +1,63 @@
+server:
+  error:
+    include-binding-errors: always
+    include-message: always
+  port: ${SERVER_PORT:4001}
+
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+  flyway:
+    locations: classpath:db/migration
+    baselineOnMigrate: true
+    sqlMigrationPrefix: V
+    sqlMigrationSeparator: __
+    validateOnMigrate: true
+    sql-migration-suffixes: .sql
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+    username: techstore@reply.com
+    password: password
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+  thymeleaf:
+    cache: false
+jwt:
+  secret: 51665468576D5A7134743777217A25432A462D4A614E645267556B586E327235
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:sqlserver://localhost:1433;databaseName=tempdb;encrypt=true;trustServerCertificate=true
+    username: sa
+    password: PaSsWoRd123
+  jpa:
+    database-platform: org.hibernate.dialect.SQLServerDialect
+    properties:
+      hibernate.format_sql: true
+    show-sql: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  datasource:
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: jdbc:sqlserver://tech_store_db;database=tempdb;encrypt=true;trustServerCertificate=true
+    username: sa
+    password: PaSsWoRd123
+  jpa:
+    database-platform: org.hibernate.dialect.SQLServerDialect
+    properties:
+      hibernate.format_sql: true
+    show-sql: true
